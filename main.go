@@ -4,8 +4,18 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"math/rand"
 	"os"
+	"time"
 )
+
+//chosing a random word from the list
+func chooserand(list []string) string {
+	rand.Seed(time.Now().Unix()) //needed so randomization works correctly
+	randomIndex := rand.Intn(len(list))
+	randword := list[randomIndex]
+	return randword
+}
 
 func main() {
 	txtFilename := flag.String("txt", "words.txt",
@@ -17,8 +27,6 @@ func main() {
 		exit("Failed to open txt file.")
 	}
 
-	defer file.Close()
-
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 	var text []string
@@ -26,14 +34,19 @@ func main() {
 		text = append(text, scanner.Text())
 	}
 
-	fmt.Println("+---+\n|   |n|\n|\n|\n|\n=========")          //0
+	file.Close()
+
+	randword := chooserand(text)
+	fmt.Println(randword)
+
+	/*fmt.Println("+---+\n|   |n|\n|\n|\n|\n=========")          //0
 	fmt.Println("+---+\n|   |\n|   O\n|\n|\n|\n=========")     //
 	fmt.Println("+---+\n|   |\n|   O\n|   |\n|\n|\n=========") //
 	fmt.Println("+---+\n|   |\n|   O\n|  /|\n|\n|\n=========")
 	fmt.Println("+---+\n|   |\n|   O\n|  /|\\\n|\n|\n=========")       //
 	fmt.Println("+---+\n|   |\n|   O\n|  /|\\\n|  /\n|\n=========")    //
 	fmt.Println("+---+\n|   |\n|   O\n|  /|\\\n|  / \\\n|\n=========") //6
-
+	*/
 }
 
 func exit(msg string) {
