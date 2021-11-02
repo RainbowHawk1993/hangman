@@ -20,10 +20,7 @@ func chooserand(list []string) string {
 }
 
 func game(word string) {
-
-	//word = "unsubstantiated"
-	//fmt.Println(word) //for testing, remove later
-	word = strings.ToLower(word)
+	word = strings.ToLower(word) //changing this to lowercase so we don't have issues with capitalization
 	length := len(word)
 
 	var underscores []string
@@ -32,7 +29,7 @@ func game(word string) {
 	}
 	underscoresJustString := strings.Join(underscores, "") //need underscores to not be a slice
 
-	var letters []string
+	var letters, allletters []string
 	lives := 0
 	win := true
 	for win {
@@ -59,10 +56,18 @@ func game(word string) {
 			} else {
 				fmt.Println("You need to enter only 1 letter")
 			}
+			//checks if the letter was entered before
+			for _, let := range allletters {
+				if letter == let {
+					fmt.Println("You have already entered this letter")
+					temptrue = true
+				}
+			}
 		}
 
-		letter = strings.TrimSpace(letter) //I'm 99% sure Scanf trims spaces automatically, but I want to be safe
-		letter = strings.ToLower(letter)   //Changing letter to lowercase because words are only in lowercase
+		letter = strings.TrimSpace(letter)      //I'm 99% sure Scanf trims spaces automatically, but I want to be safe
+		letter = strings.ToLower(letter)        //Changing letter to lowercase because words are only in lowercase
+		allletters = append(allletters, letter) //list of all entered letters
 
 		if strings.Contains(word, letter) {
 			m := regexp.MustCompile(letter)
