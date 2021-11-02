@@ -30,12 +30,13 @@ func game(word string) {
 	for i := 0; i < length; i++ {
 		underscores = append(underscores, "_")
 	}
+	underscoresJustString := strings.Join(underscores, "") //need underscores to not be a slice
 
 	lives := 0
 	win := true
 	for win {
 		hangman(lives)
-		fmt.Print(underscores)
+		fmt.Print(underscoresJustString)
 
 		var letter string
 		//checking if more than 1 letter was entered
@@ -55,7 +56,7 @@ func game(word string) {
 		//fmt.Print(letter)
 
 		m := regexp.MustCompile(letter)
-		indexes := m.FindAllStringIndex(word, -1) //this gets us a 2D array and I convert it to 1D to stuff simpler
+		indexes := m.FindAllStringIndex(word, -1) //this gets us a 2D array of indexes of this letter in the word and I convert it to 1D to make stuff simpler
 		//fmt.Print("indexes: ", indexes, indexes[0][1], indexes[1][1], indexes[0][0], indexes[1][0])
 		var index []int
 		var row = 0
@@ -64,11 +65,14 @@ func game(word string) {
 		for _, column := range indexes {
 			index = append(index, column[row])
 		}
-		fmt.Print(index)
+		fmt.Println(index)
 
-		/*for i, r := range underscores{
-			if indexes[i][i+1]
-		}*/
+		for i := range index {
+			indexnumber := index[i]
+			underscoresJustString = underscoresJustString[:indexnumber] + letter + underscoresJustString[indexnumber+1:]
+		}
+		fmt.Print(underscoresJustString)
+
 		win = false
 	}
 
