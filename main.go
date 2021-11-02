@@ -21,9 +21,9 @@ func chooserand(list []string) string {
 
 func game(word string) {
 
-	word = "unsubstantiated"
-	fmt.Println(word) //for testing, remove later
-
+	//word = "unsubstantiated"
+	//fmt.Println(word) //for testing, remove later
+	word = strings.ToLower(word)
 	length := len(word)
 
 	var underscores []string
@@ -32,11 +32,21 @@ func game(word string) {
 	}
 	underscoresJustString := strings.Join(underscores, "") //need underscores to not be a slice
 
+	var letters []string
 	lives := 0
 	win := true
 	for win {
 		hangman(lives)
-		fmt.Print(underscoresJustString)
+		if lives == 6 {
+			fmt.Println("The word was:", word)
+			exit("YOU LOSE!")
+		}
+
+		fmt.Println(underscoresJustString)
+
+		if lives > 0 {
+			fmt.Println("Letters you have already checked for that aren't in the word:", letters)
+		}
 
 		var letter string
 		//checking if more than 1 letter was entered
@@ -53,27 +63,34 @@ func game(word string) {
 
 		letter = strings.TrimSpace(letter) //I'm 99% sure Scanf trims spaces automatically, but I want to be safe
 		letter = strings.ToLower(letter)   //Changing letter to lowercase because words are only in lowercase
-		//fmt.Print(letter)
 
-		m := regexp.MustCompile(letter)
-		indexes := m.FindAllStringIndex(word, -1) //this gets us a 2D array of indexes of this letter in the word and I convert it to 1D to make stuff simpler
-		//fmt.Print("indexes: ", indexes, indexes[0][1], indexes[1][1], indexes[0][0], indexes[1][0])
-		var index []int
-		var row = 0
+		if strings.Contains(word, letter) {
+			m := regexp.MustCompile(letter)
+			indexes := m.FindAllStringIndex(word, -1) //this gets us a 2D array of indexes of this letter in the word and I convert it to 1D to make stuff simpler
 
-		//this gets us 1D array of indexes
-		for _, column := range indexes {
-			index = append(index, column[row])
+			var index []int
+			var row = 0
+
+			//this gets us 1D array of indexes
+			for _, column := range indexes {
+				index = append(index, column[row])
+			}
+
+			for i := range index {
+				indexnumber := index[i]
+				underscoresJustString = underscoresJustString[:indexnumber] + letter + underscoresJustString[indexnumber+1:]
+			}
+		} else {
+			fmt.Println("Seems like this letter doesn't exist in this word!")
+			letters = append(letters, letter) //making list of letters that user checked for already
+			lives++
 		}
-		fmt.Println(index)
 
-		for i := range index {
-			indexnumber := index[i]
-			underscoresJustString = underscoresJustString[:indexnumber] + letter + underscoresJustString[indexnumber+1:]
+		if strings.Contains(underscoresJustString, "_") {
+			//do nothing
+		} else {
+			exit("\nCONGRATULATIONS, YOU WIN!")
 		}
-		fmt.Print(underscoresJustString)
-
-		win = false
 	}
 
 }
@@ -99,8 +116,7 @@ func hangman(counter int) {
 }
 
 func main() {
-	txtFilename := flag.String("txt", "words.txt",
-		"a txt file with 1 word per line, all words are expected to be lowercase")
+	txtFilename := flag.String("txt", "words.txt", "a txt file with 1 word per line")
 	flag.Parse()
 
 	file, err := os.Open(*txtFilename)
