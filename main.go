@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -13,12 +14,16 @@ import (
 //chosing a random word from the list
 func chooserand(list []string) string {
 	rand.Seed(time.Now().Unix()) //needed so randomization works correctly
-	randomIndex := rand.Intn(len(list))
-	randword := list[randomIndex]
+	randomindexes := rand.Intn(len(list))
+	randword := list[randomindexes]
 	return randword
 }
 
 func game(word string) {
+
+	word = "unsubstantiated"
+	fmt.Println(word) //for testing, remove later
+
 	length := len(word)
 
 	var underscores []string
@@ -32,23 +37,38 @@ func game(word string) {
 		hangman(lives)
 		fmt.Print(underscores)
 
-		var answer string
+		var letter string
+		//checking if more than 1 letter was entered
 		temptrue := true
 		for temptrue {
 			fmt.Print("\nGuess a letter: ")
-			fmt.Scanf("%s \n", &answer)
-			//checking if more than 1 letter was entered
-			if len(answer) == 1 {
+			fmt.Scanf("%s \n", &letter)
+			if len(letter) == 1 {
 				temptrue = false
 			} else {
 				fmt.Println("You need to enter only 1 letter")
 			}
 		}
 
-		answer = strings.TrimSpace(answer) //I'm 99% sure Scanf trims spaces automatically, but I want to be safe
-		answer = strings.ToLower(answer)   //Changing letter to lowercase because words are only in lowercase
-		//fmt.Print(answer)
+		letter = strings.TrimSpace(letter) //I'm 99% sure Scanf trims spaces automatically, but I want to be safe
+		letter = strings.ToLower(letter)   //Changing letter to lowercase because words are only in lowercase
+		//fmt.Print(letter)
 
+		m := regexp.MustCompile(letter)
+		indexes := m.FindAllStringIndex(word, -1) //this gets us a 2D array and I convert it to 1D to stuff simpler
+		//fmt.Print("indexes: ", indexes, indexes[0][1], indexes[1][1], indexes[0][0], indexes[1][0])
+		var index []int
+		var row = 0
+
+		//this gets us 1D array of indexes
+		for _, column := range indexes {
+			index = append(index, column[row])
+		}
+		fmt.Print(index)
+
+		/*for i, r := range underscores{
+			if indexes[i][i+1]
+		}*/
 		win = false
 	}
 
