@@ -94,7 +94,9 @@ func game(word string) {
 		if strings.Contains(underscoresJustString, "_") {
 			//do nothing
 		} else {
-			exit("\nCONGRATULATIONS, YOU WIN!")
+			word = strings.ToUpper(word)
+			fmt.Println("\nCONGRATULATIONS, YOU WIN! THE WORD WAS: ", word)
+			exit("")
 		}
 	}
 
