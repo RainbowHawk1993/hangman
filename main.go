@@ -19,7 +19,7 @@ func chooserand(list []string) string {
 	return randword
 }
 
-func game(word string) {
+func game(word string, text []string) {
 	word = strings.ToLower(word) //changing this to lowercase so we don't have issues with capitalization
 	length := len(word)
 
@@ -35,8 +35,21 @@ func game(word string) {
 	for win {
 		hangman(lives)
 		if lives == 6 {
+			fmt.Println("YOU LOSE!")
 			fmt.Println("The word was:", word)
-			exit("YOU LOSE!")
+
+			var PlayAgain string
+			fmt.Print("\nWould you like to play again? (Y/N) ")
+			fmt.Scanf("%s \n", &PlayAgain)
+			PlayAgain = strings.ToLower(PlayAgain)
+
+			if PlayAgain == "y" {
+				randword := chooserand(text)
+				game(randword, text)
+			} else {
+				exit("YOU LOSE!")
+			}
+
 		}
 
 		fmt.Println(underscoresJustString)
@@ -67,7 +80,7 @@ func game(word string) {
 
 		letter = strings.TrimSpace(letter)      //I'm 99% sure Scanf trims spaces automatically, but I want to be safe
 		letter = strings.ToLower(letter)        //Changing letter to lowercase because words are only in lowercase
-		allletters = append(allletters, letter) //list of all entered letters
+		allletters = append(allletters, letter) //keeping list of all entered letters
 
 		if strings.Contains(word, letter) {
 			m := regexp.MustCompile(letter)
@@ -96,7 +109,18 @@ func game(word string) {
 		} else {
 			word = strings.ToUpper(word)
 			fmt.Println("\nCONGRATULATIONS, YOU WIN! THE WORD WAS: ", word)
-			exit("")
+
+			var PlayAgain string
+			fmt.Print("\nWould you like to play again? (Y/N) ")
+			fmt.Scanf("%s \n", &PlayAgain)
+			PlayAgain = strings.ToLower(PlayAgain)
+
+			if PlayAgain == "y" {
+				randword := chooserand(text)
+				game(randword, text)
+			} else {
+				exit("YOU WIN!")
+			}
 		}
 	}
 
@@ -141,7 +165,7 @@ func main() {
 	file.Close()
 
 	randword := chooserand(text)
-	game(randword)
+	game(randword, text)
 
 }
 
