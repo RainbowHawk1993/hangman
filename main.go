@@ -59,16 +59,21 @@ func game(word string, text []string) {
 		}
 
 		var letter string
-		//checking if more than 1 letter was entered
+
 		temptrue := true
 		for temptrue {
 			fmt.Print("\nGuess a letter: ")
 			fmt.Scanf("%s \n", &letter)
+
+			//checking if more than 1 letter was entered
 			if len(letter) == 1 {
 				temptrue = false
 			} else {
 				fmt.Println("You need to enter only 1 letter")
 			}
+			letter = strings.TrimSpace(letter) //not needed?
+			letter = strings.ToLower(letter)   //Changing letter to lowercase because words are only in lowercase
+
 			//checks if the letter was entered before
 			for _, let := range allletters {
 				if letter == let {
@@ -76,10 +81,19 @@ func game(word string, text []string) {
 					temptrue = true
 				}
 			}
+			//checks if letter is in fact a letter
+			alphabetcheck := false
+			for r := 'a'; r < 'z'; r++ {
+				if letter == string(r) {
+					alphabetcheck = true
+				}
+			}
+			if alphabetcheck == false {
+				fmt.Println("Enter only letters, words don't contain numbers or special symbols")
+				temptrue = true
+			}
 		}
 
-		letter = strings.TrimSpace(letter)      //I'm 99% sure Scanf trims spaces automatically, but I want to be safe
-		letter = strings.ToLower(letter)        //Changing letter to lowercase because words are only in lowercase
 		allletters = append(allletters, letter) //keeping list of all entered letters
 
 		if strings.Contains(word, letter) {
